@@ -49,26 +49,33 @@ export default function Navbar() {
 
         {/* Desktop Nav */}
         <nav className="hidden md:flex items-center gap-8">
-          <ul className="flex items-center gap-6">
+          <ul className="flex items-center gap-2 relative">
             {navLinks.map((link) => (
-              <li key={link.name}>
+              <motion.li 
+                key={link.name}
+                className="relative"
+              >
                 <a 
                   href={link.href} 
-                  className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+                  className="px-4 py-2 text-sm font-semibold text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors relative z-10"
                 >
                   {link.name}
                 </a>
-              </li>
+              </motion.li>
             ))}
+            
+            {/* Sliding hover indicator (optional, but let's stick to a simpler hover for now or just add a focus underline) */}
           </ul>
           
-          <button 
+          <motion.button 
+            whileHover={{ scale: 1.1, rotate: 10 }}
+            whileTap={{ scale: 0.9 }}
             onClick={toggleTheme}
-            className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+            className="ml-4 p-2.5 rounded-xl bg-gray-100 dark:bg-dark-card text-gray-700 dark:text-gray-300 shadow-sm border border-gray-200 dark:border-white/5"
             aria-label="Toggle Dark Mode"
           >
-            {theme === 'dark' ? <FiSun className="w-5 h-5 text-yellow-400" /> : <FiMoon className="w-5 h-5 text-gray-700" />}
-          </button>
+            {theme === 'dark' ? <FiSun className="w-5 h-5 text-yellow-400" /> : <FiMoon className="w-5 h-5" />}
+          </motion.button>
         </nav>
 
         {/* Mobile Toggle */}
@@ -93,24 +100,35 @@ export default function Navbar() {
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-white dark:bg-dark-card border-b border-gray-200 dark:border-gray-800"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="fixed inset-x-0 top-[70px] p-6 md:hidden z-40"
           >
-            <ul className="px-6 py-4 flex flex-col gap-4 relative z-50">
-              {navLinks.map((link) => (
-                <li key={link.name}>
-                  <a 
-                    href={link.href} 
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="block text-lg font-medium text-gray-800 dark:text-gray-200 hover:text-primary-600 dark:hover:text-primary-400"
+            <motion.div 
+              className="glass-card rounded-3xl overflow-hidden shadow-2xl border border-white/20"
+              initial={{ scale: 0.95 }}
+              animate={{ scale: 1 }}
+            >
+              <ul className="flex flex-col p-4">
+                {navLinks.map((link, idx) => (
+                  <motion.li 
+                    key={link.name}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: idx * 0.05 }}
                   >
-                    {link.name}
-                  </a>
-                </li>
-              ))}
-            </ul>
+                    <a 
+                      href={link.href} 
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="block px-6 py-4 text-xl font-bold text-gray-800 dark:text-gray-100 hover:bg-primary-500/10 hover:text-primary-600 rounded-2xl transition-all"
+                    >
+                      {link.name}
+                    </a>
+                  </motion.li>
+                ))}
+              </ul>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
